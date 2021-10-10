@@ -1,0 +1,180 @@
+{% extends "vendor/base.html" %}
+
+{% block title %}
+    Create New Shop
+{% endblock %}
+
+{% block content %}
+                
+<main class="container my-4">
+	<!-- Featured Products -->
+	<h3 class="my-4 border-bottom pb-1">My Dashboard</h3>
+	<div class="row">
+		<div class="col-md-3">
+		</div>
+		<div class="col-md-9">
+			<div>
+			  <canvas id="myChart"></canvas>
+			</div>
+		</div>
+         {{total}}
+	</div>
+</main>        
+           
+            
+    
+            
+               
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script type="text/javascript">
+	const labels = {{monthNumber|safe}};
+	const data = {
+	  labels: labels,
+	  datasets: [{
+	    label: 'Orders By Month',
+	    backgroundColor: 'rgb(255, 99, 132)',
+	    borderColor: 'rgb(255, 99, 132)',
+	    data: {{totalOrders}},
+	  }]
+	};
+
+	const config = {
+	  type: 'bar',
+	  data,
+	  options: {}
+	};
+
+	var myChart = new Chart(
+	    document.getElementById('myChart'),
+	    config
+  	);
+
+</script>  
+var ctx = document.getElementById("myChart").getContext("2d");                  
+   var ctx = document.getElementById("myChart").getContext("2d");
+var labels = {{daynumber|safe}}
+var total_order_days={{total_order_days}}
+var total_amount_days ={{total_amount_days}}
+Chart.defaults.global.legend.labels.usePointStyle = true;
+
+var data = {
+  
+  labels: labels,
+  datasets: [
+    {
+      
+      label: "Negative",
+      data: total_amount_days,
+      backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+      pointRadius: 0,
+    },
+    {
+      
+      label: "Positive",
+      data: total_order_days,
+      backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+      pointRadius: 0,
+    },
+  ],
+};
+var options = {
+  responsive: true,
+  plugins: {
+    legend: {
+      position: 'top',
+    },
+    title: {
+      display: true,
+      text: 'Chart.js Line Chart'
+    }
+  },
+  layout: {
+    padding: {
+      left: 50,
+      right: 50,
+      top: 50,
+      bottom: 50,
+    },
+  },
+  title: {
+    display: true,
+    text: "Rezultatet sipas pikëve",
+    fontFamily: "Raleway",
+   
+  },
+ 
+};
+var myChart = new Chart(ctx, {
+  type: "line",
+  backgroundColor: "white",
+  data: data,
+  options: options,
+});
+  var ctx = document.getElementById("pieChart").getContext("2d");
+  
+  var config = {
+    type: "doughnut",
+    data: {
+      datasets: [
+        {
+          data: [10, 38, 30, 48],
+          backgroundColor: [
+            "rgb(246,69,115)",
+            "rgb(255,152,1)",
+            "rgb(0,162,255)",
+            "rgb(124,179,26)",
+          ],
+          label: "Nota",
+        },
+      ],
+      labels: ["Nota 5", "Nota 6-7", "Nota 8-9", "Nota 10"],
+    },
+    options: {
+      legend: {
+        position: "bottom",
+      },
+      responsive: true,
+      maintainAspectRatio: true,
+      layout: {
+        padding: {
+          left: 50,
+          right: 50,
+          top: 50,
+          bottom: 50,
+        },
+      },
+    },
+  };
+  
+  var myPie = new Chart(ctx, config);                     
+{% endblock %}

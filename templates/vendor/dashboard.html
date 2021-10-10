@@ -1,0 +1,192 @@
+{% extends "vendor/base.html" %}
+{% load cart_template_tags %}
+{% block title %}
+    Create New Shop
+{% endblock %}
+
+{% block content %}
+<main class="container my-4">
+	<!-- Featured Products -->
+  
+	<h3 class="my-4 border-bottom pb-1">My Dashboard</h3>
+  
+  <div class="d-flex justify-content-between" style="width:100%">
+    <div class="border p-2">
+      {% for key,value in result_amount.items %}
+      {% ifchanged  %}
+      {% ifchanged  %}
+        <div>
+          <span>Revenue</span>
+        </div>
+        {%endifchanged%}
+         {% if key == 'today' %}
+        <div>
+          <span style="font-size: 1.3rem;">$ {{value}}</span>
+        </div>
+        {% endif %}
+        {% if key == 'yesterday' %}
+        <div class="d-flex justify-content-between">
+          <span>so voi {{key}}</span>
+          <span class="ml-3 result_amount">000%</span>
+          {%if result_amount.today >= result_amount.yesterday %}
+          <div><i class="fas fa-long-arrow-alt-up" style="color:#00e874"></i></div>
+          {%else%}
+          <div><i class="fas fa-long-arrow-alt-down" style="color: red;"></i></div>
+          {%endif%}
+        </div>
+        {% endif %}
+       {% endifchanged %}
+      {%endfor%}
+      </div>
+
+    <div class="border p-2">
+    {% for key,value in result_order.items %}
+    {% ifchanged  %}
+    {% ifchanged  %}
+      <div>
+        <span>Order</span>
+      </div>
+      {%endifchanged%}
+       {% if key == 'today' %}
+      <div>
+        <span style="font-size: 1.3rem;">{{value}}</span>
+      </div>
+      {% endif %}
+      {% if key == 'yesterday' %}
+      <div class="d-flex justify-content-between">
+        <span>so voi {{key}}</span>
+        <span class="ml-3 result">000%</span>
+      </div>
+      {% endif %}
+     {% endifchanged %}
+    {%endfor%}
+    </div>
+    
+    
+    
+    
+    
+  </div>
+  
+
+
+	<div class="chartBox">
+    <canvas id="lineChart"  style="display: block; height: 457px; width: 667px;"  class="chartjs-render-monitor"></canvas>
+  </div>
+
+</main>
+  {{hours}}  
+  
+         {{sum}}      
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+
+<script type="text/javascript">
+   // or whatever you want...
+   var today= parseInt('{{result_order.today}}')
+   var yesterday=parseInt('{{result_order.yesterday}}')
+
+   var today_amount=parseInt('{{result_amount.today}}')
+   var yesterday_amount=parseInt('{{result_amount.yesterday}}')
+  var result=parseFloat((today/yesterday)*100)
+  document.querySelector('.result').innerHTML=result + ' %'
+
+  var result_amount=Math.round(parseFloat((today_amount/yesterday_amount)*100))
+
+  document.querySelector('.result_amount').innerHTML=result_amount + ' %'
+
+  var labels={{hours|safe}}
+  var total_amount_day ={{ sum }}
+  var total_order_day = {{count}}
+  let draw = Chart.controllers.line.prototype.draw;
+  
+  var ctx = document.getElementById("lineChart").getContext("2d");
+  var labels = labels
+    
+  
+  Chart.defaults.global.legend.labels.usePointStyle = true;
+  
+  var data = {
+    
+    labels: labels,
+    datasets: [
+      {
+        fill: false,
+        label: "revenue",
+        data: total_amount_day,
+        backgroundColor: 'rgb(255, 99, 132)',
+        borderColor: 'rgb(255, 99, 132)',
+        borderWidth: 1
+      },
+      {
+        fill: false,
+        label: "number order",
+        data: total_order_day,
+        borderColor: "rgb(80, 204, 168, 1)",
+        backgroundColor: "rgb(80, 204, 168, 1)",
+        
+        borderWidth: 1
+      },
+    ],
+  };
+  
+  var options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    legend: {
+      position: 'top'
+      ,
+      align:'end'
+    },
+    layout: {
+      padding: {
+        left: 50,
+        right: 50,
+        top: 50,
+        bottom: 50,
+      },
+    },
+    scales: {
+      x: {
+        min: '0',
+
+        type: 'time',
+        time: {
+          unit: 'hour',
+          stepSize:1
+      },
+        
+      },
+      y: {
+          
+          min:0,
+          max:12000,
+          stepSize:1
+      }
+  },
+    title: {
+      display: true,
+      text: "Total revenue today",
+      fontFamily: "Raleway",
+      fontColor: "#434a52",
+      fontSize:20,
+    },
+    interaction: {
+      mode: 'index',
+      intersect: false
+    }
+  };
+  
+  var myChart = new Chart(ctx, {
+    type: "line",
+    backgroundColor: "red",
+  
+    data: data,
+    options: options,
+  });
+  
+
+
+
+</script>               
+{% endblock %}

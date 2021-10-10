@@ -1,0 +1,183 @@
+{% extends "vendor/base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}
+    Add Item
+{% endblock %}
+
+{% block content %}
+<main>
+    <div class="container" >
+    
+        {{user}}
+        <div class="mb-3">
+            <h3 style="font-size:1.4rem">Add 1 new product</h3>
+            <p>Please select the appropriate category for your product.</p>
+        </div>
+        <div class="d-flex align-items-center mb-4">
+            <div class="mr-3">
+            <label for="nameproduct" >Name Product</label>
+            </div>
+            <div > 
+                <input type="text" class="form-control name" id="nameproduct" placeholder="Name Product" style="width: 500px;" required>
+                <p id="demo"></p>
+            </div>
+        </div>
+        {% load mptt_tags %}
+        
+        <ul class="d-flex flex-column" id='menu'>
+             {% recursetree category %}
+                 <li class="parent {% if node.level == 1 %}class_1{% elif node.level == 2 %}class_2{% elif node.level == 3 %}class_3{% endif %}" data="{% if node.choice == True %}{{node.title}}{%endif%}" id="{% if node.choice == True %}category{%endif%}">
+                    <div class="parents">
+                         <p>{{ node.title }}</p> 
+                         {% if node.choice != True %} 
+                        <i class="fa fa-angle-right"> 
+                        </i>{% endif %}
+                    </div>
+                    
+                     {% if not node.is_leaf_node %}
+                     <ul id="children{% if node.level == 1 %}1{% elif node.level == 2 %}2{% endif %}" >
+                         {{ children }}
+                     </ul>
+                     {% endif %}
+                    
+                 </li>
+                 
+             {% endrecursetree %}
+             
+         </ul>
+           
+           
+        <button class="btn btn-info submit" type="button" id="submit" style="cursor: not-allowed;">Submit</button>
+   
+   
+    </div>  
+
+</main>
+<script type="text/javascript">
+    var menu = document.querySelectorAll('#menu > li');
+    var menu_childrens = document.querySelectorAll('.class_2');
+        // Lặp qua từng menu để gán sự kiện click
+        for (var i = 0; i < menu.length; i++)
+        {
+            menu[i].addEventListener("click", function()
+        {   
+                var menuList = document.querySelectorAll('#children');
+                
+                for (var j = 0; j < menuList.length; j++){
+                                        menuList[j].style.display = "none";
+                    
+                }
+        
+                
+            if (this.children){
+                this.children[1].style.display = "block";}
+                
+            }); 
+        }
+        var menu_children = document.querySelectorAll('.class_1');
+        
+        for (var i = 0; i<menu_children.length; i++)
+        {
+            menu_children[i].addEventListener("click", function()
+                        {   
+                // Ẩn hết menu con
+                var menuLists = document.querySelectorAll('#children1');
+                for (var j = 0; j<menuLists.length; j++){
+                                        menuLists[j].style.display = "none";
+                }
+                if (this.children){
+                this.children[1].style.display = "block";}
+            }); 
+        }
+
+        
+        // Lặp qua từng menu để gán sự kiện click
+        for (var k = 0; k<menu_childrens.length; k++)
+        {
+            menu_childrens[k].addEventListener("click", function()
+                        {   
+                // Ẩn hết menu con
+                var menucon = document.querySelectorAll('#children2');
+                for (var l = 0; l<menucon.length; l++){
+                                        menucon[l].style.display = "none";
+                }
+                if (this.children){
+                    this.children[1].style.display = "block";}
+            
+            }); 
+        }
+
+            const button= document.querySelector(".submit");
+            
+            let category_item = document.querySelectorAll("#category")
+            for(let i=0;i<category_item.length;i++){
+            category_item[i].addEventListener("click", ()=>{
+                category_item[i].classList.add('selected')
+                button.style.cursor='pointer'
+            for(let j=0;j<category_item.length;j++){
+                if(i!==j){   
+                category_item[j].classList.remove('selected')
+                
+                }
+            }
+            }
+            )}
+                                
+                          
+            button.addEventListener("click", (e)=>{
+                e.preventDefault();
+                
+                
+                let name = document.querySelector(".name").value;
+                let category = document.querySelector(".selected").getAttribute('data')
+                
+                if (!document.querySelector(".name").checkValidity()) {
+                    document.getElementById("demo").innerHTML = document.querySelector(".name").validationMessage;
+                  }
+                
+                
+                else{
+                const form = new FormData()
+                form.append("name",name)
+                form.append("category",category)
+                
+                
+            function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                            }
+                        }
+                    }
+                return cookieValue;
+            }
+            const csrftoken = getCookie('csrftoken');
+            var url = "{% url 'vendor:add_item' %}"
+            var urls="{% url 'vendor:add_item_detail' %}"
+            fetch(url, {
+                method: 'POST',
+                credentials: 'same-origin',
+                // Do not send CSRF token to another domain.
+                headers:{
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest', //Necessary to work with request.is_ajax()
+                    'X-CSRFToken': csrftoken,
+                },
+                body: form//JavaScript object of data to POST
+                })
+                .then(response => response.json())
+                .then(result => {
+                
+                })
+                .catch(error => console.error('Unable to get items.', error));
+            }
+                    })
+
+</script>     
+{% endblock %}

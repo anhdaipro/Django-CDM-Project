@@ -1,0 +1,23 @@
+<div class="col-6 col-lg-2 col-sm-3 col-md-3" > 
+            <div class="category">
+                <div class="my-3">
+                    <img src="{{shop.logo.url}}" alt="" height="100px" width="100px">
+                </div>
+                <p>{{shop.name}}: {{shop.total_view}}</p>
+            </div>
+            <div class="ml-3">
+                <form action="{% url 'home:follow' shop.slug %}" method="POST" class="my_form">
+                  {% csrf_token %}
+                    
+                    {% if user.is_authenticated %}
+                    {% if user not in shop.followers.all %}
+                    <button type="submit" class="btn btn-light border form_shop"  value="Like"><i class="fa fa-plus mr-2" aria-hidden="true" ></i>Follow</button>
+                    {% else %}
+                    <button type="submit" class="btn btn-light border form_shop" value="Unlike">Đang Follow</button>
+                    {% endif %}
+                    {% else %}
+                    <a href="{% url 'app_user:signin' %}" class="like"><i class="far fa-heart mr-2" aria-hidden="true" ></i></a>
+                    {% endif %}     
+                </form>
+              </div>
+        </div> 
