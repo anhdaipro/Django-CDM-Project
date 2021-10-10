@@ -1,0 +1,88 @@
+{% extends "account/base.html" %}
+{% block content %}
+{% load crispy_forms_tags %}
+<div class="container h-100">
+		<div class="d-flex justify-content-center h-100">
+		  
+			<div class="user_card">
+				<div class="d-flex justify-content-center">
+					<h3 id="form-title">LOGIN</h3>
+				</div>
+				<div class="d-flex justify-content-center form_container">
+					<form method="POST" action="{% url 'app_user:signin' %}">
+						{% csrf_token %}
+						<div class="form-group">  
+							<label for="username">Username:</label>  
+							<input type="text" class="form-control" id="username" placeholder="Enter username" name="username">
+						</div>  
+						<div class="form-group">  
+							<label for="pwd1">Password:</label> 
+							<div class="anh">
+								<input type="password" class="form-control" id="pwd1" placeholder="Enter password" name="password">
+								<span toggle="#password-field" class="fas fa-fw fa-eye-slash mr-1 field-icon toggle-password"></span>
+							</div>
+						</div>   
+						
+				 		<input class="btn login_btn " type="submit" value="Login">
+							<small class="text-muted m-2">
+                    		<a href="{% url 'password_reset' %}">Forgot Password?</a>
+                			</small>
+				   		
+					</form>
+				</div>
+				<div class="social mx-3">
+					<div class="bg-dark" style="height: 1px;width:100%;"></div>
+					<p class="mx-3" style="
+						margin-bottom:8px; font-size:1.5rem">or</p>
+					<div class="bg-dark" style="height: 1px;width:100%"></div>
+				</div>
+				
+				<div class="d-flex justify-content-center">
+					
+					<div class="col-xs-2 col-sm-2">
+					  <a href="{% url 'social:begin' 'facebook' %}?next=/" class="btn btn-lg" data-toggle="tooltip" data-placement="top" title="Facebook">
+						<i class="fab fa-facebook-square fa-2x"></i>
+						<span class="hidden-xs"></span>
+					  </a>
+					</div>
+					<div class="col-xs-2 col-sm-2">
+					  <a href="{% url 'social:begin' 'instagram' %}?next=/" class="btn btn-lg" data-toggle="tooltip" data-placement="top" title="Twitter">
+						<i class="fab fa-twitter-square fa-2x"></i>
+						<span class="hidden-xs"></span>
+					  </a>
+					</div>  
+					<div class="col-xs-2 col-sm-2">
+					  <a href="{% url 'social:begin' 'google-oauth2' %}?next=/" class="btn btn-lg" data-toggle="tooltip" data-placement="top" title="Google Plus">
+						<i class="fab fa-google-plus fa-2x"></i>
+						<span class="hidden-xs"></span>
+					  </a>
+					</div>  
+			  </div><br>
+				
+		
+				<div class="mt-4">
+					<div class="d-flex justify-content-center links">
+						Don't have an account? <a href="{% url 'app_user:signup' %}" class="ml-2">Sign Up</a>
+					</div>
+			
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+	input=document.querySelector('#pwd1')
+	eye=document.querySelector('.fa-eye-slash')
+		eye.onclick=()=>{
+			
+			if(input.type==="password"){
+				input.type="text"
+				eye.classList.add("fa-eye");
+				eye.classList.remove("fa-eye-slash");
+			}
+			else{
+			input.type="password"
+			eye.classList.remove("fa-eye");
+			eye.classList.add("fa-eye-slash");}
+		}
+	</script>
+{% endblock  %}

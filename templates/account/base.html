@@ -1,0 +1,203 @@
+{% load static %}
+{% load social_share %}
+{% load crispy_forms_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+
+   <style>
+		
+		html {
+			
+				color: #333;
+				font-size: 90%;
+				font-family: 'Open Sans', sans-serif;
+			}
+			
+		body{
+		background-color: aliceblue;
+		}
+		.social{
+			display: flex; /* Important */ 
+    		align-items: center; /* Important */ 
+    
+		}
+		span{
+		color:gray;
+		}
+		.selected{
+		padding:.4rem;
+		background: #33ccff;
+		}
+		.signup {
+			width: 400px;
+			min-height: 400px;
+			padding: 32px 24px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background: #74cfbf;
+			flex-direction: column;
+			border-radius: 2px;
+			margin: 24px;
+			align-self: center;
+			border-radius: 5px;
+			box-shadow: 0 2px 5px 0 rgba(51,62,73,.1);
+		}
+		.field-icon {
+			float: right;
+			margin-left: -25px;
+			margin-top: -25px;
+			position: relative;
+			z-index: 2;
+		  }
+		.main {
+			background: #f1f1f1;
+			min-height: 100vh;
+			display: flex;
+			justify-content: center;
+		}
+		.form {
+			width: 360px;
+			min-height: 100px;
+			padding: 32px 24px;
+			text-align: center;
+			background: #fff;
+			border-radius: 2px;
+			margin: 24px;
+			align-self: center;
+			box-shadow: 0 2px 5px 0 rgba(51,62,73,.1);
+		}
+		.form-control {
+		height: 40px;
+		width:290px;
+		padding: 8px 12px;
+		border: 1px solid #b3b3b3;
+		border-radius: 3px;
+		outline: none;
+		font-size: 1rem;
+}
+
+.form-control:hover {
+    border-color: #1dbfaf;
+}
+		.user_card {
+			width: 400px;
+			margin-top: auto;
+			margin-bottom: auto;
+			background: #74cfbf;
+			
+			display: flex;
+			justify-content: center;
+			flex-direction: column;
+			padding: 10px;
+			box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+			-webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+			-moz-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+			border-radius: 5px;
+
+		}
+
+		.form_container {
+			margin-top: 20px;
+            
+		}
+
+		#form-title{
+			color: #fff;
+			
+		}
+
+		.login_btn {
+			width: 100%;
+			background: #33ccff !important;
+			color: white !important;
+		}
+		.login_btn:focus {
+			box-shadow: none !important;
+			outline: 0px !important;
+		}
+		.login_container {
+			padding: 0 2rem;
+		}
+		.input-group-text {
+			background: #f7ba5b !important;
+			color: white !important;
+			border: 0 !important;
+			border-radius: 0.25rem 0 0 0.25rem !important;
+		}
+		.input_user,
+		.input_pass:focus {
+			box-shadow: none !important;
+			outline: 0px !important;
+            width:200px
+		}
+        .form-control{
+            width:200px
+        }
+		.alert{
+position: fixed;
+box-shadow: 0 1rem 2rem rgba(0,0,0,.1);
+padding: 1rem;
+background-color: #1f1f18;
+top: 20%;
+left: 50%;
+transform: translate(-50%, -50%);
+border-radius: 5px;
+z-index: 10000;
+opacity: 0.8;
+
+  }
+.alert i{
+  font-size: 30px;
+  color: orange;
+}
+		.message{
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		padding: 1rem;
+		}
+	</style>
+
+
+</head>
+ 
+<body>
+    
+       {% if messages %}
+            {% for message in messages %}
+            <div class="alert" role="alert">
+              <div class="message">
+              <i class="fas fa-check-circle"></i>
+              <span style="color: #fcfcfc;">{{ message }}</span>
+              </div>
+            </div>
+            {% endfor %}
+        {% endif %}  
+    
+    {% block content %}
+
+    {% endblock content %}
+
+    <script>
+	close=document.querySelectorAll('.alert')
+      for (let i = 0; i < close.length; i++) {
+        setTimeout(function(){ close[i].style.display = "none"; }, 3000);
+      }
+	</script>
+
+</body>
+</html>

@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block content %}
+{% load crispy_forms_tags %}
+<main style="background: #f8f8f8;" class="p-2 pt-3"> 
+    <div class="d-flex flex-row" >
+        {% include "account/footer.html" %}
+        <div class="container"  id="ordered">
+            <div class="mx-4 d-flex justify-content-between border-bottom pb-4">
+                <div><h5>My address</h5></div>
+                <div class="btn btn-info update"><span class="pr-2"><i class="fas fa-plus"></i> Add new address</span></div>
+            </div>
+            <div class="address">
+                <div class="address_update">
+                <form action="{% url 'app_user:add' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="md-form ">
+                        <div class="infomation">Name</div>
+                        <input type='text' placeholder='name' id='shipping_address2' name='name' class='form-control' value="{{address.name}}"/>  
+                    </div>
+                    <div class="md-form ">
+                        <div class="infomation">Phone_number</div>
+                        <input type='text' placeholder='phone number' id='shipping_address2' name='phone_number' class='form-control' value="{{address.phone_number}}"/>
+                    </div>
+                    <div class="md-form ">
+                        <div class="infomation">Address</div>
+                        <input type='text' placeholder='1234 Main St' id='shipping_address' name='address' class='form-control' value="{{address.address}}" />
+                    </div>
+                    <div class="md-form ">
+                        <div class="infomation">City</div>
+                        <input type='text' placeholder='city' id='shipping_address2' name='city' class='form-control' value="{{address.city}}"/>
+                    </div>
+                    <button class="btn btn-info">Add address</button>
+                    <button type="button" class="btn btn-info cancel_update">Cancel</button>
+                </form>
+                </div>
+            </div>
+            
+            {% for address in addresses %}
+            <div class="mt-3 mb-2 mx-4 border-bottom">
+                <div>
+                    <span>Name: </span><span>{{address.name}}</span>
+                </div>
+                <div>
+                    SĐT: (+84){{address.phone_number}}
+                </div>
+                <div>
+                    Address: {{address.address}}
+                </div>
+                <div>
+                    City(tỉnh): {{address.city}}
+                </div>
+                <div>
+                    Address type: {{address.get_address_type_display}}
+                </div>
+                <div class=" d-flex flex-row my-2">
+                    <form action="{% url 'app_user:delete' %}" method="POST">
+                        {% csrf_token %}
+                    <input type="hidden" name='id' value="{{address.id}}">
+                        <button class="btn btn-info">Delete</button>  
+                    </form>
+                    <div class="mx-4"><span class="waves-effect update btn btn-info">Update</span></div>
+                </div>
+                <div class="address" >
+                    <div class="address_update">
+                        <form action="{% url 'app_user:update' address.id %}" method="POST">
+                            {% csrf_token %}
+                            <div class="row">
+                                <input type="hidden" name='id' value="{{address.id}}">
+                                <div class="md-form ">
+                                    <div class="infomation">Name</div>
+                                    <input type='text' placeholder='name' id='shipping_address2' name='name' class='form-control' value="{{address.name}}"/>  
+                                </div>
+                                <div class="md-form ">
+                                    <div class="infomation">Phone_number</div>
+                                    <input type='text' placeholder='phone number' id='shipping_address2' name='phone_number' class='form-control' value="{{address.phone_number}}"/>
+                                </div>
+                                <div class="md-form ">
+                                    <div class="infomation">Address</div>
+                                    <input type='text' placeholder='1234 Main St' id='shipping_address' name='address' class='form-control' value="{{address.address}}" />
+                                </div>
+                                <div class="md-form ">
+                                    <div class="infomation">City</div>
+                                    <input type='text' placeholder='city' id='shipping_address2' name='city' class='form-control' value="{{address.city}}"/>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-info">Update</button>
+                            <button type="button" class="btn btn-info cancel_update">Cancel</button>
+                        </form>
+                    </div>
+                </div>  
+            </div>
+            {% endfor %}
+             
+        </div>
+    </div>
+</main>
+<script>
+    let address_update = document.querySelectorAll('.address_update')
+    let address = document.querySelectorAll('.address')
+    let update = document.querySelectorAll('.update')
+    let cancel_update = document.querySelectorAll('.cancel_update')
+    for(let i=0;i<update.length;i++){
+    update[i].onclick=()=>{
+    for(let j=0;j<address.length;j++){
+    if(i===j){
+    address[j].classList.add('address-active')
+    address_update[j].style.display = "block"
+    }}}}
+
+    for(let i=0;i<cancel_update.length;i++){
+    cancel_update[i].onclick=()=>{
+        for(let j=0;j<address.length;j++){
+            if(i===j){
+            address[j].classList.remove('address-active')
+            address_update[j].style.display = "none"
+            
+        }}}}
+</script>
+{% endblock %}

@@ -1,0 +1,177 @@
+ {% load cart_template_tags %}
+ 
+ 
+<div class="d-flex flex-column" id="navbar">
+   
+    <!-- Links -->
+      <!-- Right -->
+      <div class="d-flex  flex-row mx-5">
+        <div class="d-flex container-lg flex-row justify-content-left py-2">
+          <div class="nav-item">
+            <a class=" waves-effect text-dark" href="{% url 'vendor:login_vendor' %}">
+              <span class="clearfix d-none d-sm-inline-block"> Seller channel </span>
+            </a>
+          </div>
+          <div class="nav-item row mx-3">
+            <a class=" waves-effect text-dark mx-2" href="#">
+              <span class="clearfix d-none d-sm-inline-block mx-2"> Dowload app </span>
+              <span class="clearfix d-none d-sm-inline-block"> Conection </span>
+            </a>
+            <a class="waves-effect text-dark" href="#">
+            <i class="fab fa-instagram"></i>
+            </a>
+            <a class="waves-effect text-dark mx-2" href="#">
+              <i class="fab fa-facebook-square"></i>
+            </a>
+            <a class="waves-effect text-dark" href="#">
+              <i class="fab fa-twitter-square"></i>
+            </a>
+          </div>
+        </div>
+        <div class=" d-flex container-lg flex-row justify-content-end p-2 mx-2">
+          <div class="nav-item row mx-3 " id="navs">
+              <a class=" waves-effect text-dark" href="#">
+                  <i class="far fa-bell"></i>
+                  <span class="clearfix d-none d-sm-inline-block"> Notify </span>
+              </a>
+              
+              <a class=" waves-effect text-dark ml-5" href="#">
+                <i class="far fa-question-circle"></i>
+                <span class="clearfix d-none d-sm-inline-block"> Suport </span>
+              </a>
+          </div>
+          
+          {% if request.user.is_authenticated %}
+          <div class="nav-item ml-4" id="nav">
+            <a href="#" class="waves-effect text-dark" >
+              <img id="img-preview2" src='{{user.customer.image.url}}'/>
+              <span class="d-sm-inline-block"> {{user}} </span>
+              
+            </a> 
+            <div class="log">
+                <a href="{% url 'app_user:logout' %}">
+                  <span> Logout </span>
+                </a>
+    
+                <a href="#">
+                  <span> Order </span>
+                </a>
+    
+                <a href="{% url 'app_user:profile' %}">
+                  <span> Account </span>
+                </a>
+            </div>
+          </div>
+  
+          {% else %}
+          <div class="nav-item">
+            <a class=" waves-effect text-dark" href="{% url 'app_user:signin' %}">
+              <span class="clearfix d-none d-sm-inline-block"> Login </span>
+            </a>
+          </div>
+          <div class="nav-item mx-2">
+            <a class=" waves-effect text-dark" href="{% url 'app_user:signup' %}">
+              <span class="clearfix d-none d-sm-inline-block"> Signup </span>
+            </a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+     
+  
+    <div class="d-flex  flex-row justify-content-around   pb-3">
+      <div>
+      <a class="navbar-brand waves-effect  text-dark" href="{% url 'home:home' %}">
+        <strong class="white-text">DJe-commerce</strong>
+      </a>
+    </div>
+      
+       
+       
+    </div>
+</div>
+
+<script>
+  /*carts = document.querySelector('#cart_view')
+   cart_view = document.querySelector('.cart_view')
+
+  carts.onmouseover = () => {
+    cart_view .classList.add('cart_view-active')
+  }
+  carts.onmouseout = () => {
+    cart_view .classList.remove('cart_view-active')
+  }
+  cart_view .onmouseover = () => {
+    cart_view .classList.add('cart_view-active')
+  }
+
+  cart_view .onmouseout = () => {
+   cart_view .classList.remove('cart_view-active')
+  }
+
+  
+  
+  function showNotifications() {
+    const container = document.getElementById('notification-container');
+  
+    if (container.classList.contains('d-none')) {
+      container.classList.remove('d-none');
+    } else {
+      container.classList.add('d-none');
+    }
+  }
+  
+  function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+              const cookie = cookies[i].trim();
+              // Does this cookie string begin with the name we want?
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+              }
+          }
+      }
+      return cookieValue;
+  }
+  
+  function removeNotification(removeNotificationURL, redirectURL) {
+    const csrftoken = getCookie('csrftoken');
+    let xmlhttp = new XMLHttpRequest();
+  
+    xmlhttp.onreadystatechange = function() {
+      if (xmlhttp.readyState == XMLHttpRequest.DONE) {
+        if (xmlhttp.status == 200) {
+          window.location.replace(redirectURL);
+        } else {
+          alert('There was an error');
+        }
+      }
+    };
+  
+    xmlhttp.open("DELETE", removeNotificationURL, true);
+    xmlhttp.setRequestHeader("X-CSRFToken", csrftoken);
+    xmlhttp.send();
+  }
+  */
+  {% if user.is_authenticated %}
+  nav = document.querySelector('#nav')
+   app_user = document.querySelector('.log')
+  
+  nav.onmouseover = () => {
+    app_user.classList.add('log-active')
+  }
+  nav.onmouseout = () => {
+    app_user.classList.remove('log-active')
+  }
+  app_user.onmouseover = () => {
+    app_user.classList.add('log-active')
+  }
+
+  app_user.onmouseout = () => {
+    app_user.classList.remove('log-active')
+  }
+  {%endif%}
+</script>
