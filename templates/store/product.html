@@ -1,0 +1,909 @@
+{% extends "base.html" %}
+{% load social_share %}
+{% load crispy_forms_tags %}
+{% load cart_template_tags %}
+{% block content %}
+ 
+<main class="mt-5">
+      {% if user.customer.is_online %}
+        Online
+      {% else %}
+        Offline
+      {% endif %}
+  {{user.customer.online}}
+   
+  <div class="container dark-grey-text">
+   
+    <div class="product">
+      <div class="d-flex flex-column">
+        <div class="d-flex justify-content-center" id="slider">
+          {% for i in item.variation_set.all|sort_by:'color__name' %}
+          {% ifchanged  %}
+          {% if i.color.image != null %}
+          <div class="mySlides" id="image_big"  data="{{i.color}}">
+            <img src="{{i.color.image.url}}" class="image_big" style="width:100%" alt="">
+          </div>
+          {%endif%}
+          {%endifchanged%}
+          {%endfor%}
+          <div class="mySlides">
+            <img src="{{item.image_cover.url}}" class="image_big"  alt="">
+          </div>
+          {% if image1 != null %}
+          <div class="mySlides">
+            <img src="{{item.image1.url}}" class="image_big"  alt="">
+          </div>
+          {% endif %}
+          {% if image2 != null %}
+          <div class="mySlides">
+            <img src="{{item.image2.url}}" class="image_big" style="width:100%" alt="">
+          </div>
+          {% endif %}
+          {% if image3 != null %}
+          <div class="mySlides">
+            <img src="{{item.image3.url}}" class="image_big" style="width:100%" alt="">
+          </div>
+          {% endif %}
+          {% if image4 != null %}
+          <div class="mySlides">
+            <img src="{{item.image4.url}}" class="image_big" style="width:100%" alt="">
+          </div>
+          {% endif %}
+          {% if image5 != null %}
+          <div class="mySlides">
+            <img src="{{item.image5.url}}" class="image_big" style="width:100%" alt="">
+          </div>
+          {% endif %}
+          {% if image6 != null %}
+          <div class="mySlides">
+            <img src="{{item.image6.url}}" class="image_big" style="width:100%" alt="">
+          </div>
+          {% endif %}
+          {% if image7 != null %}
+          <div class="mySlides">
+            <img src="{{item.image7.url}}" class="image_big" style="width:100%" alt="">
+          </div>
+          {% endif %}
+          <a class="prev" onclick="plusSlides(-1)">❮</a>
+          <a class="next" onclick="plusSlides(1)">❯</a>
+        </div>
+        <div class="d-flex mt-4 justify-content-center">
+          {% for i in items %}
+            <div class="images_color">
+              <img src="{{i.image.url}}" alt="" class="image_color">
+              <p class="text-center mb-0 small">{{i.color}}</span>
+            </div>
+          {% endfor %}
+        </div>
+         
+        <div class="d-flex flex-row justify-content-center align-items-center mt-4">
+          <div class="share">
+            <div><span class="text-info">Share:</span></div>
+              {% post_to_facebook item.slug " " "fab fa-facebook-square fa-2x mx-2" %}
+              {% post_to_twitter " " item.slug  " " 'fab fa-twitter-square fa-2x' %}
+            </div>
+            <div class="ml-3">
+              <form action="{% url 'shops:like_product' %}" method="POST" class="my_form">
+                {% csrf_token %}
+                  <input type="hidden" value="{{item.id}}" name="like">
+                  {% if user.is_authenticated %}
+                  {% if user not in item.liked.all %}
+                    <button type="submit" class="like "  value="Like"><i class="far fa-heart mr-2" aria-hidden="true" ></i></button>
+                  {% else %}
+                    <button type="submit" class="like " value="Unlike"><i class="fas fa-heart mr-2" aria-hidden="true" ></i></button>
+                  {% endif %}
+                  {% else %}
+                    <a href="{% url 'app_user:signin' %}" class="like"><i class="far fa-heart mr-2" aria-hidden="true" ></i></a>
+                  {% endif %}     
+              </form>
+            </div>
+            <a><span class="text-info">Đã thích ({{item.num_like}})</span></a>
+        </div>
+      </div>
+      <div class="d-flex flex-column">
+        <!------------------------Content----------------------------->
+        <div class="p-3">
+          <div class="product-rating mb-2">
+              <p style="font-size: 20px;">{{item.name }}</p>{{item.view}}
+              <i class="{% if item.avaregereview < 0.5%}far fa-star{% else %}fas fa-star{% endif%}"></i>
+              <i class="{% if item.avaregereview < 1.5%}far fa-star{% else %}fas fa-star{% endif%}"></i>
+              <i class="{% if item.avaregereview < 2.5%}far fa-star{% else %}fas fa-star{% endif%}"></i>
+              <i class="{% if item.avaregereview < 3.5%}far fa-star{% else %}fas fa-star{% endif%}"></i>
+              <i class="{% if item.avaregereview < 4.5%}far fa-star{% else %}fas fa-star{% endif%}"></i>
+              <!-- next line is for average value -->
+              <a href="#review">{{ item.countreview}} {% if item.countreview > 1 %} reviews {% else %} review {% endif%} </a>
+          </div>
+          <div class="d-flex">
+            {% for i in colors %}
+            <a href="{{i.slug}}" class="memory  pb-1" name="memory" value="{{ i.memory }}"><span class="waves-effect mb-2">{{ i.memory }}GB</span></a>    
+
+            {% endfor %} 
+          </div>
+          <input type="hidden" class="slug" value="{{item.slug}}">
+          <p class="mt-2"><strong>Shop:</strong> {{item.shop}}</p>
+          <div class="lead my-2 d-flex">
+            
+            <div class="mr-4 ">
+            {% if  price_min.min != price_max.max %}
+              <del class="price_min_max">${{ price_min.min }} -  ${{ price_max.max }}</del>
+            {% else %}
+              <del class="price_min_max">${{ price_max.max }}</del>
+              {% endif %}
+            </div>
+            
+            <div class="ml-4">
+            {% if  discount_price_min.min != discount_price_max.max %}
+              <span class="discount_price_min_max">${{ discount_price_min.min }} - ${{ discount_price_max.max }}</span>
+              {% else %}
+              <span class="discount_price_min_max">${{ discount_price_max.max }}</span>
+              {%endif%}
+            </div>
+          </div>
+        </div>
+        <div class="choice_variation">
+            
+             
+              <div class="d-flex variant_color">
+                {% for i in color   %}
+                {% if i.name != None %} 
+                  {% ifchanged  %}
+                  <label class="mr-2" style="width:80px">Color</label>
+                  {% endifchanged %}
+                  {% ifchanged  %}
+                    <button class="product-variation" item="{% for item in i.variation_set.all %}{{item.id}} {%endfor%}" value="{{i.name}}" data="{{i.name}}">{{i.name}}
+                      <div id="bottomright" class="d-none bottomright">
+                        <i class="fas fa-check"></i>
+                      </div>
+                    </button>
+                    {% endifchanged %}
+                  {% endif %}
+                {% endfor %}
+              </div>
+            
+            
+              <div class="d-flex variant_size">
+                {% for i in size  %}
+                {% if i.name != None %} 
+                  {% ifchanged  %}
+                  <label class="mr-2" style="width:80px">Size</label>
+                  {% endifchanged %}
+                  {% ifchanged  %}
+                  <button class="product-variations" item="{% for item in i.variation_set.all %}{{item.id}} {%endfor%}" value="{{i.name}}"   data="{{i.name}}">{{i.name}}
+                    <div id="bottomrights" class="d-none bottomrights">
+                      <i class="fas fa-check"></i>
+                    </div>
+                  </button>
+                  {% endifchanged %}
+                {%endif%}
+                {% endfor %}
+              </div>
+           
+            <p>Please choice quantity</p>
+            <div class="input-group d-flex justify-content-center align-items-center" style="width: 240px;" id="choice_quantity">
+                <span class=" btn-minus">
+                  <button class="btn btn-white " type="button">
+                    <i class="fa fa-minus" aria-hidden="true"></i>
+                  </button>
+                </span>
+                <input type="number" name="quantity" class="form-control no-padding quantity" id="max" width="40px" value=1 step=1 min=1 max=10>
+                <span class=" btn-plus">
+                  <button class="btn btn-red " type="button">
+                  <i class="fa fa-plus" aria-hidden="true"></i>
+                  </button>
+                </span>
+                <div class="ml-3 inventory d-flex  align-items-center"  style="width:120px">{{variant.sum}}  avaliable</div>
+                <span></span>
+                
+            </div>
+            <div class="waring "></div>
+        </div>
+        <div class="my-2 ml-3">
+            <button class="btn btn-primary btn-md mr-1 my-1" id="buy">Buy now</button>
+            <button class="btn btn-primary btn-md  mr-1 my-1" id="buy_now">BUY NOW</button>
+        </div>
+      </div>  
+    </div>
+
+    <!-------------------------------------------- shop----------------------------------------->
+
+    <div class="shop">
+      <div class="d-flex flex-row border-right align-items-center pr-5 mr-4">
+        <div>
+          <a  href="{{item.shop.get_absolute_url}}"><img src="{{item.shop.logo.url}}" alt="" id="img-shop"></a>
+        </div>
+        <div class="d-flex flex-column ml-3">
+          <p>{{item.shop.name}}</p>
+          <p class="time_off">{% if item.shop.user.customer.is_online%}Online{%else%}Online {{ time_off|stringformat:".0f" }} minutes ago {%endif%}</p>
+          <div class="d-flex ">
+            <button class="mr-2 btn btn-light border"><i class="far fa-comment"></i> CHAT NOW</button>
+            <a class="btn btn-danger" href="{{item.shop.get_absolute_url}}"><i class="fas fa-store-alt"></i> XEM SHOP</a>
+          </div>
+        </div>
+      </div>
+      <div class="follower">
+        <div>
+          <div class="d-flex">
+            <span>Rating</span>
+            <span>dddddddd</span>
+          </div>
+          <div class="d-flex" style="width:200px">
+            <span class="mr-2">Join</span>
+            <span>{{time}} days ago</span>
+          </div>
+        </div>
+        <div>
+          <div class="d-flex">
+            <span class="mr-2">Product</span> 
+            <span>{{items.count}}</span>
+          </div>
+          <div class="d-flex">
+            <span class="mr-2">Follower</span>
+            <span>{{item.shop.num_follow}}</span>
+          </div>
+        </div>
+          
+      </div>
+      
+    </div>
+
+    <!------------------------------------------- shop------------------------------------------>
+
+    <!-----------------------------------------detail item--------------------------------------->   
+    <div class="detail_item pl-3" >
+      <h4>CHI TIẾT SẢN PHẨM</h4>
+      <div class="d-flex mt-3"  id="column">
+        <div>
+          {% for i in item_detail %}
+          <div>
+              {% for x, y in i.items %}
+              {% if forloop.counter > 4 %}
+                <div class="detail-item" >
+                  {%if y != None %}
+                  <div style="width: 200px;">{{x|to_and|title}}</div>
+                  <div>{{y}}</div>
+                  {%endif%}
+                </div>   
+              {% endif %}
+              {% endfor %}
+          </div>
+          {% endfor %} 
+        </div>
+        
+      </div>
+      <div class=" my-4" style="width:600px;font-size:14px">
+        <h4>INFO PRODUCT</h4>
+          <div>
+            {{item.description|linebreaks}}
+          </div>
+      </div>
+    
+    </div>
+    <div class="d-flex flex-collumn">
+      <div class="">
+        <span>{{item.name}} {{item.variant.color}} {{item.variant.size}}</span><i class="fa fa-times" id="times1"></i>
+        <form action="{% url 'shops:review' item.id %}" method="POST">
+        {% csrf_token %}
+        {% if user.is_authenticated %}
+        {% if order %}
+          <div class="d-flex flex-row">
+            <strong class="text-uppercase">Your Rating: </strong>
+          </div>
+          <div class="rating mr-4">
+            <input type="radio" id="star5" name="review_rating" value="5" /><label for="star5"></label>
+            <input type="radio" id="star4" name="review_rating" value="4" /><label for="star4"></label>
+            <input type="radio" id="star3" name="review_rating" value="3" /><label for="star3"></label>
+            <input type="radio" id="star2" name="review_rating" value="2" /><label for="star2"></label>
+            <input type="radio" id="star1" name="review_rating" value="1" /><label for="star1"></label>
+          </div>
+        
+          <div class="my-2 pr-2">
+            <textarea name="review_text" class="" placeholder="Your review" rows="4" cols="70"></textarea>
+          </div>
+          <button class="btn btn-primary">Submit</button>
+          {% else %}
+          you purchase product to review
+          {% endif %}
+        {% endif %}
+          
+        </form>
+      </div>
+    </div>
+   
+    <!---------------------------------------  detail item------------------------------------->
+        
+    
+    {% if user.is_authenticated %}
+      <h5 style="text-align: end; padding-right: 10px">Logged in as : {{ user.username }}</h5>
+      <input type="hidden" id="logged-in-user" value="{{ user.id }}">
+    
+		<div class="chat">
+				<div class="chat mt-4">
+          <div class="card">
+            <div class="card-header">
+              <div class="d-flex">
+                <input type="text" placeholder="Search..." name="" class="form-control search" style="width:200px">
+                <div class="input-group-prepend">
+                  <span class="input-group-text search_btn"><i class="fas fa-search"></i></span>
+                </div>
+              </div>
+            </div>
+            <div class="card-body contacts_body">
+              <ui class="contacts">
+                {% for thread in Threads %}
+                  <div class="{% if forloop.first %}active{% endif %} contact-li" chat-id="chat_{{ thread.id }}" style="cursor: pointer">
+                    <div class="d-flex bd-highlight my-2">
+                      <div class="img_cont mx-2">
+                        <img src="{{thread.first_person.customer.image.url}}" id="img-shop" style="width: 24px;height:24px" />
+                        {% if thread.first_person.customer.is_online %}<span class="online_icon"></span>{%endif%}
+                      </div>
+                      
+                      <div class="user_info">
+                        {% if thread.first_person == user %}
+                        <span class="mx-2"> {{ thread.second_person.username }}</span>
+                        {% else %}
+                        <span class="mx-2"> {{ thread.first_person.username }}</span>
+                        
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                {% endfor %}
+              </ui>
+            </div>
+            <div class="card-footer"></div>
+				  </div>
+        </div>
+				<div class=" chat mt-4">
+					<div class="card">
+            {% for thread in Threads %}
+              <div class="messages-wrapper {% if forloop.first %}hide is_active{% else %}hide{% endif %}" chat-id="chat_{{ thread.id }}" 
+                other-user-id="{% if thread.first_person == user %}{{ thread.second_person.id }}
+                {% else %}{{ thread.first_person.id }}{% endif %}">
+                <div class="card-header">
+                    <div class="messages">
+                      <div class="img_cont mx-2 d-flex">
+                        <img src="{{thread.first_person.customer.image.url}}"  id="img-shop" style="width: 24px;height:24px" />
+                        {% if thread.first_person.customer.is_online%}<span class="online_icon"></span>{%endif%}
+                      </div>
+                      <div>
+                      {% if thread.first_person == user %}
+                      <span class="mx-2"> {{ thread.second_person.username }}</span>
+                      {% else %}
+                      <span class="mx-2"> {{ thread.first_person.username }}</span>
+                      {% endif %}
+                      {% if thread.first_person.user.customer %}online{%endif%}
+                      </div>
+                      <div class='d-flex justify-content-end'>
+                        <div>
+                          <span class="mr-2"><i class="fas fa-video"></i></span>
+                          <span><i class="fas fa-phone"></i></span>
+                        </div>
+                        
+                      </div>
+                    </div>
+                    
+                </div>
+                <div class="card-body msg_card_body">
+                                    <!------- messages ------->
+                  {% for chat in thread.chatmessage_thread.all %}
+                    {% if chat.user == user %}
+                      <div class="d-flex mb-2 flex-column">
+                          <div class="d-flex justify-content-end">
+                            <span class="send">{{ chat.message }}</span>
+                          </div>
+                          <div class="d-flex justify-content-center">  
+                            <span class="msg_time_send">{{ chat.timestamp|date:"d D" }}, {{ chat.timestamp|time:"H:i" }}</span>
+                          </div>
+                          <div class="chat_image">
+                            {%if image != null %}
+                            <img src="{{chat.image.url}}" width="50px" />
+                            {%endif%}
+                          </div>
+                                             
+                      </div>
+                    {% else %}
+                      <div class="d-flex mb-2 flex-column">
+                        <div class="d-flex justify-content-star ">
+                          <img src="{{item.shop.user.customer.image.url}}"  id="img-shop" style="width: 24px;height:24px" />
+                          <span class="received mx-2">{{ chat.message }}</span>
+                        </div>
+                        <div class="d-flex justify-content-center">
+                          <span class="msg_time_received">{{ chat.timestamp|date:"d D" }}, {{ chat.timestamp|time:"H:i" }}</span>
+                        </div>
+                        
+                      </div>
+                    {% endif %}
+                    <span class="msg_times_send"></span>
+                    <span class="msg_times_received"></span>
+                  {% endfor %}
+                                    <!------- messages ------->
+                </div>
+					    </div>
+            {% endfor %}
+              <div class="card-footer">
+                <form id="send-message-form">
+                  <input type="hidden" id="time" value="">
+                  <div class="d-flex justify-content-center align-items-center">
+                      <div class="d-flex justify-content-center align-items-center">
+                        
+                        <label class="input-group-text" for="image"><i class="fas fa-paperclip"></i></label>
+                        <input type="file" accept="image/*" id="image">
+                      </div>
+                      <input type="text" name="" id="input-message" class="form-control type_msg mx-2" placeholder="Type your message...">
+                      <div class="m">
+                        <button class="button">
+                          <span class="send_btn">
+                            <i class="fas fa-location-arrow"></i>
+                          </span>
+                        </button>
+                      </div>
+                  </div>
+                </form>
+              </div>
+          </div>
+				</div>
+		</div>
+    {% endif %}
+  </div>  
+  
+</main>
+
+<script>
+  
+  var num = parseFloat('{{time_off}}');
+    var hours = (num / 60);
+    var rhours = Math.round(Math.floor(hours));
+    var minutes = (hours - rhours) * 60;
+    if (minutes>30){
+      rhours += 1
+    }
+    if(num > 120){
+    document.querySelector('.time_off').innerHTML='Online ' + rhours + " hours " +"ago.";
+    }
+    else if(num < 120 && num > 60){
+      document.querySelector('.time_off').innerHTML='Online ' + rhours + " hour " +"ago.";
+      }
+    
+/* -----------------------------------------------quantity-----------------------------------------------------*/
+
+  $(document).ready(function() {
+    $('.btn-minus').click(function () {
+      var $input = $(this).parent().find('input');
+      var count = parseInt($input.val()) - 1;
+      count = count < 1 ? 1 : count;
+      $input.val(count);
+      $input.change();
+      return false;
+    });
+    $('.btn-plus').click(function () {
+      var $input = $(this).parent().find('input');
+      var count = parseInt($input.val()) + 1;
+      count = count > $input.attr('max') ? $input.attr('max') : count;
+      $input.val(count);
+      $input.change();
+      return false;
+    });
+  });
+
+/* -------------------------------------------quantity-----------------------------------------------------*/
+
+/*----------------------------------------------variation---------------------------------------------------*/
+
+max=document.querySelector('#max')
+main=document.querySelector('main')
+quantity=document.querySelector('#quantity')
+image_color=document.querySelectorAll('#image_big')
+image_s=document.querySelectorAll('.image_big')
+choice_quantity=document.querySelector('#choice_quantity')
+button = document.querySelectorAll('.bottomright')
+product = document.querySelectorAll('.product-variation')
+buttons = document.querySelectorAll('.bottomrights')
+products = document.querySelectorAll('.product-variations')
+variant_color=document.querySelector('.product-variation')
+variant_size=document.querySelector('.product-variations')
+
+for( let i=0;i<product.length;i++){
+  product[i].onclick = ()=>{
+    if(product[i].classList.contains('product-variation-active')){
+      product[i].classList.remove('product-variation-active')
+      main.classList.remove('a')
+      button[i].classList.add('d-none')
+      for(let j=0;j<products.length;j++){
+        if (products[j].classList.contains('product-variation-disable')){
+          products[j].classList.remove('product-variation-disable')
+        }
+      }
+    }
+    else{
+      if (product[i].classList.contains('product-variation-disable')){
+        product[i].classList.remove('product-variation-active')
+        main.classList.remove('a')
+        button[i].classList.add('d-none')
+      }
+      else{
+      product[i].classList.add('product-variation-active')
+      main.classList.add('a')
+      button[i].classList.remove('d-none')
+      if(document.querySelector('.product-variation-actives') !==undefined && document.querySelector('.product-variation-actives') !==null || variant_size === null){
+          document.querySelector('.waring').innerHTML=''
+          document.querySelector('.choice_variation').classList.remove('waring_choice')
+        }
+      for(let k=0;k<image_s.length;k++){
+        if(k===i){ 
+      image_color[i].style.display = "block";
+      image_s[k].classList.add('color_active')}}
+      for( let m=0;m<button.length;m++){
+        if(i!==m){   
+          button[m].classList.add('d-none')
+            product[m].classList.remove('product-variation-active')
+            image_color[m].style.display='none'
+            image_s[m].classList.remove('color_active')
+          }
+        }
+      
+      for(let j=0;j<products.length;j++){
+        products[j].classList.add('product-variation-disable')
+          let z= product[i].getAttributeNode('item').value.toString().trim().split(" ")
+          let y= products[j].getAttributeNode('item').value.toString().trim().split(" ")
+          for(let k=0; k<z.length;k++){
+            for(let m=0; m<y.length;m++){
+              if(z[k]===y[m]){
+                products[j].classList.remove('product-variation-disable')
+              }
+            }
+          }
+        }
+      }
+    }    
+  }
+} 
+ 
+for(let i=0;i<products.length;i++){
+  products[i].onclick=()=>{
+    if(products[i].classList.contains('product-variation-actives')){
+      products[i].classList.remove('product-variation-actives')
+      main.classList.remove('bcd')
+      buttons[i].classList.add('d-none')
+      for(let j=0;j<product.length;j++){
+        if (product[j].classList.contains('product-variation-disable')){
+          product[j].classList.remove('product-variation-disable')
+        }
+      }
+    }
+    else{
+      if(products[i].classList.contains('product-variation-disable')){
+        products[i].classList.remove('product-variation-actives')
+        main.classList.remove('bcd')
+        buttons[i].classList.add('d-none')
+      }
+      else{
+      products[i].classList.add('product-variation-actives')
+      main.classList.add('bcd')
+      buttons[i].classList.remove('d-none')
+      if(document.querySelector('.product-variation-active') !==undefined && document.querySelector('.product-variation-active') !==null || variant_color===null){
+        document.querySelector('.waring').innerHTML=''
+        document.querySelector('.choice_variation').classList.remove('waring_choice')
+      }
+        for(let k=0;k<products.length;k++){
+          if(k!==i){
+            products[k].classList.remove('product-variation-actives')
+            buttons[k].classList.add('d-none')
+          }
+      }
+      
+      for(let j=0;j<product.length;j++){
+        product[j].classList.add('product-variation-disable')
+        let z= products[i].getAttributeNode('item').value.toString().trim().split(" ")
+        let y= product[j].getAttributeNode('item').value.toString().trim().split(" ")
+          for(let k=0; k<z.length;k++){
+            for(let m=0; m<y.length;m++){
+              if(z[k]===y[m]){
+                product[j].classList.remove('product-variation-disable')
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}  
+
+/*----------------------------------------------variation---------------------------------------------------*/
+</script>
+
+<script>
+// Set the value of the "date" field
+  {% if user.is_authenticated %}
+  var d = new Date();
+  // Set the value of the "date" field
+  document.getElementById("time").value = d.toDateString();
+  // Set the value of the "time" field
+  var weekday = new Array(7);
+  weekday[0] = "Sun";
+  weekday[1] = "Mon";
+  weekday[2] = "Tue";
+  weekday[3] = "Wed";
+  weekday[4] = "Thu";
+  weekday[5] = "Fri";
+  weekday[6] = "Sat";
+
+  var hours = d.getHours();
+  var mins = d.getMinutes();
+  var mounth =d.getMonth()
+  var day =d.getDate()
+  
+  var n = weekday[d.getDay()];
+  if(day < 10 ){
+  let u = "0" + day + ' ' + n  + ', ' + hours + ":" + mins
+  document.getElementById("time").value=u
+  }
+  else{
+    let u = day + ' ' + n  + ', ' + hours + ":" + mins
+    document.getElementById("time").value=u
+    }
+
+    {%endif%}
+// Set the value of the "date" field
+
+// Slide
+
+var slideIndex = 1;
+showSlides(slideIndex);
+
+function plusSlides(n) {
+  showSlides(slideIndex += n);
+}
+function showSlides(n) {
+  var i;
+  var slides = document.getElementsByClassName("mySlides");
+  if (n > slides.length) {slideIndex = 1}
+  if (n < 1) {slideIndex = slides.length}
+  for (i = 0; i < slides.length; i++) {
+      slides[i].style.display = "none";
+  }
+  slides[slideIndex-1].style.display = "block";
+}
+
+function commentReplyToggle(parent_id) {
+	const row = document.getElementById(parent_id);
+
+	if (row.classList.contains('d-none')) {
+		row.classList.remove('d-none');
+	} else {
+		row.classList.add('d-none');
+	}
+}
+
+function showNotifications() {
+	const container = document.getElementById('notification-container');
+
+	if (container.classList.contains('d-none')) {
+		container.classList.remove('d-none');
+	} else {
+		container.classList.add('d-none');
+	}
+}
+
+</script>
+<script>
+
+/*-------------------------------------------  add to cart---------------------------------------*/
+
+add_to_cart=document.querySelector('#buy')  
+add_to=document.querySelector('#buy_now')
+
+add_to_cart.addEventListener("click", (e)=>{
+  if ((variant_color !== 'undefined' && variant_color !== null && main.classList.contains('a') && variant_size === null) || (variant_size !== 'undefined' && variant_size !== null && main.classList.contains('bcd') && variant_color === null) || (main.classList.contains('a') && main.classList.contains('bcd'))){
+    document.querySelector('.waring').innerHTML=''
+    document.querySelector('.choice_variation').classList.remove('waring_choice')
+    e.preventDefault();
+    slug = document.querySelector(".slug").value;
+    
+     quantity= document.querySelector(".quantity").value;
+   
+    const form = new FormData()
+    if (typeof(document.querySelector(".product-variation-active")) !== 'undefined' && document.querySelector(".product-variation-active") !== null)
+    {
+   color = document.querySelector(".product-variation-active").getAttribute('data');
+      form.append("color",color)
+    }
+    if(typeof(document.querySelector(".product-variation-actives")) != 'undefined' && document.querySelector(".product-variation-actives") !== null)
+    {
+      size = document.querySelector(".product-variation-actives").getAttribute('data');
+      form.append("size",size)}
+      form.append("slug",slug)
+      form.append("quantity",quantity)
+      
+      function getCookie(name) {
+      cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+          for ( i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+              // Does this cookie string begin with the name we want?
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+                }
+              }
+            }
+        return cookieValue;
+      }
+      const csrftoken = getCookie('csrftoken');
+      var url = "{% url 'order:add_to_cart' %}"
+     
+      var urls="{% url 'order:order_summary' %}"
+      fetch(url, {
+        method: 'POST',
+        credentials: 'same-origin',
+          // Do not send CSRF token to another domain.
+        headers:{
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest', //Necessary to work with request.is_ajax()
+            'X-CSRFToken': csrftoken,
+          },
+          body:form//JavaScript object of data to POST
+          })
+          .then(response => response.json())
+          .then(result => {
+             
+              location.href=urls
+              document.getElementById('demo').innerHTML='ok'
+               
+          })
+          .catch(error => 
+          {
+           
+           
+          });
+        }
+        
+        else{
+          document.querySelector('.waring').innerHTML='Please choice size or color'
+          document.querySelector('.choice_variation').classList.add('waring_choice')
+        }
+      })
+
+/*-------------------------------------------  add to cart---------------------------------------*/
+
+/*  --------------------------------get price---------------------------------------------- */
+
+var price_max='{{price_max.max}}'
+var price_min='{{price_min.min}}'
+var discount_price_max='{{discount_price_max.max}}'
+var discount_price_min='{{discount_price_min.min}}'
+var variation='{{variant.sum}}'
+
+        $('.product-variation, .product-variations').on('click',function(){
+          
+          if ($(".product-variations") !==undefined && $(".product-variation") !==undefined  && $(".product-variations").hasClass("product-variation-actives") && $(".product-variation").hasClass("product-variation-active")){
+        $.ajax({
+          url:"{% url 'shops:get_price' %}",
+          type:'GET',
+      
+            data:{
+              size : $('.product-variation-actives').attr('data'),
+              color : $('.product-variation-active').attr('data'),
+              slug : $('.slug').attr('value')
+              },
+                  
+                  success: function(data) { // on success..
+                    
+                    let li =  `<div class="lead  d-flex">
+                      <div class="mr-4">
+                        <del class="price_min_max">$ ${data.price}</del>
+                      </div>
+                      <div class="ml-4">
+                        <span class="discount_price_min_max">$ ${data.discout_price}</span>
+                      </div>
+                    </div>`
+                    let inventory=`<div class=" inventory" style="width:120px">${data.inventory} available</div>`
+                    
+                    // Loop through each data and add a table row
+                    if (data.discout_price !== undefined  && data.price!==undefined){
+                      document.querySelector('.lead').innerHTML=li
+                      document.querySelector('.inventory').innerHTML=inventory
+                      document.querySelector('.quantity').max=data.inventory
+                    }
+                    
+                  },
+                    error: function(e, x, r) { // on error..
+                        $('#error_div').html(e); // update the DIV
+                    }
+                })
+          }
+          else if($(".product-variation") !==undefined  && $(".product-variation").hasClass("product-variation-active" )){
+            $.ajax({
+            url:"{% url 'shops:get_price' %}",
+            type:'GET',
+        
+              data:{
+                color : $('.product-variation-active').attr('data'),
+                slug : $('.slug').attr('value')
+                },
+                  
+                  success: function(data) { // on success..
+                    
+                    let li =  `<div class="lead d-flex">
+                      <div class="mr-4">
+                        <del class="price_min_max">$ ${data.price}</del>
+                      </div>
+                      <div class="ml-4">
+                        <span class="discount_price_min_max">$ ${data.discout_price}</span>
+                      </div>
+                    </div>`
+                    let inventory=`<div class=" inventory">${data.inventory} available</div>`
+                    
+                    // Loop through each data and add a table row
+                    if (data.discout_price !== undefined  && data.price!==undefined){
+                      document.querySelector('.lead').innerHTML=li
+                      document.querySelector('.inventory').innerHTML=inventory
+                      document.querySelector('.quantity').max=data.inventory
+                    }
+                    
+                  },
+                    error: function(e, x, r) { // on error..
+                        $('#error_div').html(e); // update the DIV
+                    }
+                })
+          }
+          else if($(".product-variations") !==undefined  && $(".product-variations").hasClass("product-variation-actives")){
+            $.ajax({
+            url:"{% url 'shops:get_price' %}",
+            type:'GET',
+        
+              data:{
+                size : $('.product-variation-actives').attr('data'),
+                slug : $('.slug').attr('value')
+                },
+                  
+                  success: function(data) { // on success..
+                    
+                    let li =  `<div class="lead">
+                      <div class="mr-4">
+                        <del class="price_min_max">$ ${data.price}</del>
+                      </div>
+                      <div class="ml-4">
+                        <span class="discount_price_min_max">$ ${data.discout_price}</span>
+                      </div>
+                    </div>`
+                    let inventory=`<div class="inventory">${data.inventory} available</div>`
+                    
+                    // Loop through each data and add a table row
+                    if (data.discout_price !== undefined  && data.price!==undefined){
+                      document.querySelector('.lead').innerHTML=li
+                      document.querySelector('.inventory').innerHTML=inventory
+                      document.querySelector('.quantity').max=data.inventory
+                    }
+                    
+                  },
+                    error: function(e, x, r) { // on error..
+                        $('#error_div').html(e); // update the DIV
+                    }
+                })
+          }
+          else{
+            if (price_max !== price_min){
+              document.querySelector('.price_min_max').innerHTML='$ ' + price_min + '-' +price_max
+            }
+            else{
+              document.querySelector('.price_min_max').innerHTML='$ '+price_max
+            }
+            if (discount_price_max !== discount_price_min){
+              document.querySelector('.discount_price_min_max').innerHTML='$ ' + discount_price_min + '-' +discount_price_max
+            }
+            else{
+               document.querySelector('.discount_price_min_max').innerHTML='$ ' + discount_price_min
+            }
+              document.querySelector('.inventory').innerHTML= variation + ' available'
+              document.querySelector('.quantity').max=1
+          }
+              })
+              
+
+
+              
+/*  --------------------------------get price---------------------------------------------- */
+
+</script>
+{% endblock content %}

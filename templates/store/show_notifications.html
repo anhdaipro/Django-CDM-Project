@@ -1,0 +1,36 @@
+
+	<span class="badge waves-effect" id="notify" onclick="showNotifications()">{{ notifications.count }}</span>
+	<div class="dropdown-content d-none" id="notification-container">
+		{% for notification in notifications %}
+			{% if notification.product %}
+				{% if notification.notification_type == 1 %}
+				<div class="nav-item">
+					<a class="text-dark" href="{% url 'product:post-notification' notification.pk notification.product.id %}">@{{ notification.from_user }} liked your post</a>
+					<span class="dropdown-item-close waves-effect" onclick="removeNotification(`{% url 'product:notification-delete' notification.pk %}`, `{{ request.path }}`)">&times;</span>
+				</div>
+				{% elif notification.notification_type == 2 %}
+				<div class="nav-item">
+					<a class="text-dark" href="{% url 'product:post-notification' notification.pk notification.product.id %}">@{{ notification.from_user }} commented on your post</a>
+					<span class="dropdown-item-close waves-effect" onclick="removeNotification(`{% url 'product:notification-delete' notification.pk %}`, `{{ request.path }}`)">&times;</span>
+				</div>
+				{% endif %}
+			{% elif notification.comment %}
+				{% if notification.notification_type == 1 %}
+				<div class="nav-item">
+					<a class="text-dark" href="{% url 'product:post-notification' notification.pk notification.comment.product.id %}">@{{ notification.from_user }} liked your comment</a>
+					<span class="dropdown-item-close waves-effect" onclick="removeNotification(`{% url 'product:notification-delete' notification.pk %}`, `{{ request.path }}`)">&times;</span>
+				</div>
+				{% elif notification.notification_type == 2 %}
+				<div class="nav-item">
+					<a class="text-dark" href="{% url 'product:post-notification' notification.pk notification.comment.product.id %}">@{{ notification.from_user }} replied to your comment</a>
+					<span class="dropdown-item-close waves-effect" onclick="removeNotification(`{% url 'product:notification-delete' notification.pk %}`, `{{ request.path }}`)">&times;</span>
+				</div>
+				{% endif %}
+			{% else %}
+			<div class="nav-item">
+					<a class="text-dark" href="{% url 'product:follow-notification' notification.pk notification.from_user.profile.pk %}">@{{ notification.from_user }} has started following you</a>
+					<span class="dropdown-item-close" onclick="removeNotification(`{% url 'product:notification-delete' notification.pk %}`, `{{ request.path }}`)">&times;</span>
+				</div>
+			{% endif %}
+			{% endfor %}
+	</div>
